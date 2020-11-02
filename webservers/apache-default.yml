@@ -1,0 +1,21 @@
+---
+- name: Install apache
+  hosts: localhost
+  tasks:
+  - name: Check if Apache is installed
+    command: which apache
+    register: apache_check
+    ignore_errors: yes
+
+  - block:
+    - name: Update the system
+      apt: update_cache=true
+      become: yes
+
+    - name: Install apache Pkg
+      apt: name={{ item }} state=present update_cache=yes
+      become: yes
+      with_items:
+        - apache2
+
+    when: apache_check.rc != 0
