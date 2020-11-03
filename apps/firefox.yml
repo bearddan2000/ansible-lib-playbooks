@@ -1,0 +1,19 @@
+---
+- name: Install firefox
+  hosts: localhost
+  tasks:
+  - name: Check if Firefox is installed
+    command: which firefox-esr
+    register: firefox_check
+    ignore_errors: yes
+
+  - block:
+    - name: Update the system
+      apk: update_cache=true
+      become: yes
+
+    - name: Install firefox Pkg
+      apk: name: ['firefox-esr'] state=present update_cache=yes
+      become: yes
+
+    when: firefox_check.rc != 0
