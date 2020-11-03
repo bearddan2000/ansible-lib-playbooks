@@ -13,7 +13,7 @@
       become: yes
 
     - name: Install firefox Pkg
-      apk: name: ['firefox-esr'] state=present update_cache=yes
+      apk: name=['firefox-esr'] state=present update_cache=yes
       become: yes
 
     when: firefox_check.rc != 0
