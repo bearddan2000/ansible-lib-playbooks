@@ -1,0 +1,35 @@
+---
+- name: Install ruby
+  hosts: localhost
+  tasks:
+  - name: Check if Ruby is installed
+    command: which ruby
+    register: ruby_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install ruby Pkg for Debian
+      apt:
+        name: ruby
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install ruby Pkg for RedHat
+      yum:
+        name: ruby
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install ruby Pkg for Alpine
+      apk:
+        name: ruby
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: ruby_check.rc != 0

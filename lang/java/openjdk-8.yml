@@ -1,0 +1,27 @@
+---
+- name: Install openjdk-8
+  hosts: localhost
+  tasks:
+    - name: Install openjdk-8 Pkg for Debian
+      apt:
+        name: openjdk8
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install openjdk-8 Pkg for RedHat
+      yum:
+        name: openjdk8
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install openjdk-8 Pkg for Alpine
+      apk:
+        name: openjdk8
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
