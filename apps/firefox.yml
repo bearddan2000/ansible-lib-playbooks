@@ -13,7 +13,10 @@
       become: yes
 
     - name: Install firefox Pkg
-      apk: name: ['font-noto', 'firefox-esr'] state=present update_cache=yes
+      apk:
+        name: font-noto,firefox-esr
+        state: latest
+        update_cache: yes
       become: yes
 
     when: firefox_check.rc != 0
