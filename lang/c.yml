@@ -1,0 +1,35 @@
+---
+- name: Install gcc
+  hosts: localhost
+  tasks:
+  - name: Check if GCC is installed
+    command: which gcc
+    register: gcc_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install gcc Pkg for Debian
+      apt:
+        name: gcc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install gcc Pkg for RedHat
+      yum:
+        name: gcc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install gcc Pkg for Alpine
+      apk:
+        name: gcc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: gcc_check.rc != 0
