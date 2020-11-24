@@ -4,7 +4,7 @@
   tasks:
   - name: Check if GPP is installed
     command: which g++
-    register: g++_check
+    register: gpp_check
     ignore_errors: yes
 
   - block:
@@ -41,4 +41,4 @@
       become: yes
       when: ansible_os_family == "Alpine"
 
-    when: g++_check.rc != 0
+    when: gpp_check.rc != 0
