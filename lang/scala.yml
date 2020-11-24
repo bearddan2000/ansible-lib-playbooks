@@ -1,0 +1,35 @@
+---
+- name: Install scala
+  hosts: localhost
+  tasks:
+  - name: Check if SCALA is installed
+    command: which scala
+    register: scala_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install scala Pkg for Debian
+      apt:
+        name: scala
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install scala Pkg for RedHat
+      yum:
+        name: scala
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install scala Pkg for Alpine
+      apk:
+        name: scala
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: scala_check.rc != 0

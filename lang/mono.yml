@@ -1,0 +1,44 @@
+---
+- name: Install mono-complete
+  hosts: localhost
+  tasks:
+  - name: Check if MONO is installed
+    command: which mono
+    register: mono_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install mono Pkg for Debian
+      apt:
+        name: mono-complete
+        state: present
+        update_cache: yes
+        name: mono-vbnc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install mono Pkg for RedHat
+      yum:
+        name: mono-complete
+        state: present
+        update_cache: yes
+        name: mono-vbnc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install mono Pkg for Alpine
+      apk:
+        name: mono-complete
+        state: present
+        update_cache: yes
+        name: mono-vbnc
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: mono_check.rc != 0

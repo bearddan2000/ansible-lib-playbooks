@@ -1,0 +1,44 @@
+---
+- name: Install gpp
+  hosts: localhost
+  tasks:
+  - name: Check if GPP is installed
+    command: which g++
+    register: g++_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install g++ Pkg for Debian
+      apt:
+        name: gcc
+        state: present
+        update_cache: yes
+        name: g++
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install g++ Pkg for RedHat
+      yum:
+        name: gcc
+        state: present
+        update_cache: yes
+        name: g++
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install g++ Pkg for Alpine
+      apk:
+        name: gcc
+        state: present
+        update_cache: yes
+        name: g++
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: g++_check.rc != 0

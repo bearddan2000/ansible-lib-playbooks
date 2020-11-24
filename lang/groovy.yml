@@ -1,0 +1,35 @@
+---
+- name: Install groovy
+  hosts: localhost
+  tasks:
+  - name: Check if GROOVY is installed
+    command: which groovy
+    register: groovy_check
+    ignore_errors: yes
+
+  - block:
+    - name: Install groovy Pkg for Debian
+      apt:
+        name: groovy
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install groovy Pkg for RedHat
+      yum:
+        name: groovy
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "RedHat"
+
+    - name: Install groovy Pkg for Alpine
+      apk:
+        name: groovy
+        state: present
+        update_cache: yes
+      become: yes
+      when: ansible_os_family == "Alpine"
+
+    when: groovy_check.rc != 0
