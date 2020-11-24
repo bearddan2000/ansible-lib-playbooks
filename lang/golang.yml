@@ -1,35 +1,14 @@
 ---
 - name: Install golang-go
-  hosts: localhost
+  - hosts: localhost # if you want to target another host, change it
   tasks:
-  - name: Check if golang-go is installed
-    command: which golang-go
-    register: golang-go_check
-    ignore_errors: yes
-
-  - block:
-    - name: Install golang-go Pkg for Debian
-      apt:
-        name: golang-go
-        state: present
-        update_cache: yes
-      become: yes
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-    - name: Install golang-go Pkg for RedHat
-      yum:
-        name: golang-go
-        state: present
-        update_cache: yes
-      become: yes
-      when: ansible_os_family == "RedHat"
-
-    - name: Install golang-go Pkg for Alpine
-      apk:
-        name: golang-go
-        state: present
-        update_cache: yes
-      become: yes
-      when: ansible_os_family == "Alpine"
-
-    when: golang-go_check.rc != 0
+  - import_role:
+      name: abdennour.golang
+    become: yes
+    vars:
+      golang_version: "1.14"
+      golang_packages:
+      - github.com/gorilla/mux
+      - go.mongodb.org/mongo-driver/mongo
+      golang_users:
+      - "{{ ansible_ssh_user}}"
